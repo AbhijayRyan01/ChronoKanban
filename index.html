@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kanban Board</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<main>
+  <nav>
+    <div class="nav-left">
+      <h1 id="planner-title">Hi, Abhijay</h1>
+    </div>
+
+    <div class="nav-center" id="datetime">--</div>
+
+    <div class="nav-actions">
+      <button id="toggle-modal">Add Task</button>
+    </div>
+  </nav>
+
+  <section>
+    <div id="to-do" class="task-column">
+      <div class="heading"><span>To Do</span><span class="right">0</span></div>
+    </div>
+
+    <div id="progress" class="task-column">
+      <div class="heading"><span>In Progress</span><span class="right">0</span></div>
+    </div>
+
+    <div id="done" class="task-column">
+      <div class="heading"><span>Done</span><span class="right">0</span></div>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL -->
+<div class="modal">
+  <div class="bg"></div>
+  <div class="center">
+    <input id="task-title-input" placeholder="Task title"/>
+    <textarea id="task-desc-input" placeholder="Task description"></textarea>
+    <input type="date" id="task-date-input"/>
+    <button id="add-new-task">Add Task</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
