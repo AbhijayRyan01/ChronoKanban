@@ -118,21 +118,18 @@ function createTask(task) {
     </div>
   `;
 
-  /* -------- DRAG -------- */
+  /* DRAG */
   d.addEventListener("dragstart", () => dragged = d);
   d.addEventListener("dragend", () => dragged = null);
 
-  /* -------- DELETE -------- */
+  /* DELETE */
   d.querySelector("button").onclick = () => {
     saveTasks(getTasks().filter(t => t.id !== task.id));
     render();
   };
 
-  /* 🔥 RIGHT CLICK → SEND TO NEXT DAY (FIXED) */
-  d.addEventListener("contextmenu", (e) => {
-    e.preventDefault();        // disable browser menu
-    e.stopPropagation();       // stop bubbling
-
+  /* 🔁 DOUBLE CLICK → SEND TO NEXT DAY */
+  d.addEventListener("dblclick", () => {
     const tasks = getTasks();
     const t = tasks.find(x => x.id === task.id);
     if (!t) return;
