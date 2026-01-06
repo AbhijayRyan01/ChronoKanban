@@ -17,8 +17,8 @@ let dragged = null;
 
 /* ================= STATE ================= */
 
-let viewDate = today();          // YYYY-MM-DD
-let activeSubject = null;        // null = normal planner
+let viewDate = today();
+let activeSubject = null;
 
 /* ================= HELPERS ================= */
 
@@ -32,7 +32,7 @@ function shiftDate(base, days) {
   return d.toISOString().split("T")[0];
 }
 
-/* ================= CLOCK (REAL TIME + VIEW DATE) ================= */
+/* ================= CLOCK ================= */
 
 function updateClock() {
   const now = new Date();
@@ -76,7 +76,6 @@ function render() {
 
   let tasks = getTasks();
 
-  // subject filtering
   if (activeSubject) {
     tasks = tasks.filter(t => t.subject === activeSubject);
   } else {
@@ -119,20 +118,25 @@ function createTask(task) {
     </div>
   `;
 
+  /* -------- DRAG -------- */
   d.addEventListener("dragstart", () => dragged = d);
   d.addEventListener("dragend", () => dragged = null);
 
-  // delete
+  /* -------- DELETE -------- */
   d.querySelector("button").onclick = () => {
     saveTasks(getTasks().filter(t => t.id !== task.id));
     render();
   };
 
-  // right-click → next day
-  d.addEventListener("contextmenu", e => {
-    e.preventDefault();
+  /* 🔥 RIGHT CLICK → SEND TO NEXT DAY (FIXED) */
+  d.addEventListener("contextmenu", (e) => {
+    e.preventDefault();        // disable browser menu
+    e.stopPropagation();       // stop bubbling
+
     const tasks = getTasks();
     const t = tasks.find(x => x.id === task.id);
+    if (!t) return;
+
     t.date = shiftDate(t.date, 1);
     saveTasks(tasks);
     render();
@@ -168,16 +172,19 @@ function addTask() {
   render();
 }
 
-/* ================= DRAG ================= */
+/* ================= DRAG DROP ================= */
 
 [todo, progress, done].forEach(col => {
   col.addEventListener("dragover", e => e.preventDefault());
   col.addEventListener("drop", () => {
     if (!dragged) return;
+
     const tasks = getTasks();
     const t = tasks.find(x => x.id === dragged.dataset.id);
-    t.status = col.id;
-    saveTasks(tasks);
+    if (t) {
+      t.status = col.id;
+      saveTasks(tasks);
+    }
     render();
   });
 });
@@ -190,7 +197,6 @@ addBtn.onclick = addTask;
 
 /* ================= SUBJECT PLANNER ================= */
 
-// Double click → subject planner
 plannerTitle.ondblclick = () => {
   if (activeSubject) {
     activeSubject = null;
@@ -212,7 +218,6 @@ document.addEventListener("keydown", e => {
     updateClock();
     render();
   }
-
   if (e.ctrlKey && e.key === "ArrowLeft") {
     viewDate = shiftDate(viewDate, -1);
     updateClock();
